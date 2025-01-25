@@ -1,0 +1,133 @@
+\documentclass[a4paper,zihao=-4,linespread=1]{ctexart}
+
+%\setmainfont{Times New Roman}
+%\setCJKmainfont{SimSun}  % 设置正文字体为宋体% SimSun 是宋体的字体名称
+
+\usepackage{listings}%列代码使用
+
+\usepackage{graphicx}  % 引入图形包，用于插入图片
+\newcommand{\fig}[3]%快速插入图的命令
+{
+    \begin{figure}[htp]
+        \centering
+        \caption{#1}
+        \includegraphics[width=#2\textwidth]{#3}
+    \end{figure}
+}
+\newcommand{\figu}[2]%快速插入图的命令
+{
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[width=#1\textwidth]{#2}
+    \end{figure}
+}
+\newcommand{\bold}[1]{\textbf{#1}}%加粗命令
+
+
+\usepackage{geometry}  % 引入页面布局包，用于调整页面尺寸
+\geometry{a4paper, scale=0.8}  % 设置页面尺寸和边距
+
+%\usepackage{mathptmx}  % 使用 Times 字体的数学版本
+
+
+\usepackage[]{indentfirst}          % 强制段首缩进
+\usepackage[]{bm}               %用于生成数学环境中的粗体符号。
+\usepackage{amsmath}          %提供了丰富的数学功能和环境，用于改善数学公式的排版和书写。
+\allowdisplaybreaks[1]          %它接受一个可选参数，取值范围为 0 到 4，参数值越大，公式换行的灵活性越高。
+
+\usepackage{natbib}  % 使用 natbib 包来处理引用
+\setcitestyle{numbers,square}
+% 改变引用字体
+\renewcommand{\bibfont}{\zihao{-4}\songti}
+
+\usepackage[dvipsnames]{xcolor} %用到的彩色
+\usepackage{tcolorbox}      %彩色盒子
+\tcbuselibrary{breakable}  % 支持分页
+\tcbuselibrary{skins}      % 支持更多样式
+\newtcolorbox[]{py}[1][]{colback=SeaGreen!10!CornflowerBlue!10,colframe=RoyalPurple!55!Aquamarine!100!,breakable, enhanced jigsaw}
+
+\newtcolorbox[]{code}[2][]{title=\textbf{#2},colback=SeaGreen!10!CornflowerBlue!10,colframe=RoyalPurple!55!Aquamarine!100!,breakable, enhanced jigsaw}
+
+\definecolor{safecolor}{rgb}{0.2, 0.4, 0.8}
+\newtcolorbox[]{define}[2][]
+{enhanced,
+left=22pt,right=22pt,
+fonttitle=\bfseries\large,
+coltitle=white,%%%文字色
+colbacktitle=blue!50!black,%%%背景色
+attach boxed title to top left={},%%%微調整
+boxed title style={skin=enhancedfirst jigsaw,arc=1mm,bottom=0mm,boxrule=0mm},%装飾
+boxrule=0.5pt,
+colback=safecolor!5!,%%%本文背景色
+colframe=safecolor,%%%本文枠色
+sharp corners=northwest,%%%左上角調整 
+drop fuzzy shadow,
+breakable,
+title=\vspace{3mm}#2,
+arc=1mm,%弧
+#1}
+
+\usepackage{titlesec}
+
+\usepackage{hyperref}  % 可选，用于生成超链接
+
+%\usepackage[braket, qm]{qcircuit}%量子线路包1 
+%\def\ingate{\vbox to 3.5em{\hbox to 4em{\tiny$x$\hss $x$}\vss
+%  \hbox to 4em{\Large\hss$U_f$\hss}\vss
+%  \hbox to 4em{\medmuskip1mu\tiny$y$\hss $y\oplus f(x)$}\vskip-2pt}}
+
+\usepackage{tikz}
+\usetikzlibrary{quantikz2}%量子线路包2
+
+\usepackage{enumitem}%列表环境
+% 定义新的列表环境
+\newlist{paralist}{itemize}{1}
+\setlist[paralist]{label=$\bullet$, leftmargin=38pt, itemindent=0pt, labelindent=0pt}
+\begin{document}
+
+\begin{titlepage}
+    \centering  % 使封面内容居中
+    \vspace*{5cm}  % 在页面顶部添加一些垂直空间
+
+    \textbf{\LARGE 量子算法与量子计算的原理、实现与展望}  % 封面标题，使用大号加粗字体
+
+    \vspace{1cm}  % 添加一些垂直空间
+    \large 量子科技导论结课论文  % 副标题
+    
+    \vspace{8cm}  % 添加垂直空间
+
+    \large lhn % 作者名字
+
+    \vspace{0.5cm}  % 添加垂直空间
+    \large \today  % 日期
+    \vfill   % 填充剩余空间，使内容在页面上分布更均匀
+    \includegraphics[width=0.4\textwidth]{figures/lzu2020.png}  % 插入图片，调整图片宽度
+
+
+\end{titlepage}
+
+\thispagestyle{empty}  % 去掉前言部分的页码
+\setcounter{page}{0}
+\include{abstract}
+\thispagestyle{empty}
+\setcounter{page}{0}
+
+\tableofcontents  % 生成目录
+\setcounter{page}{0}
+\include{intr}
+\include{section1}
+\include{section2}
+\include{section3}
+\include{section4}
+\appendix %附录部分
+
+\include{appendixA}
+\include{appendixB}
+% 生成参考文献列表
+\addcontentsline{toc}{section}{参考文献}%为了加入目录
+\nocite{*} %不引用
+\bibliographystyle{plain}  % 选择参考文献的格式
+\bibliography{bib/references}  % 引用 BibTeX 文件
+
+\end{document}
+

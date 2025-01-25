@@ -1,0 +1,45 @@
+\section{量子编程语言与量子云平台}
+随着量子计算不断“出圈”，人们对其也越加重视，许多开发库与工具应运而生。这里对部分典型的量子编程语言及量子云平台进行介绍。
+\subsection{量子编程语言}
+\textbf{1. Cirq (https://github.com/quantumlib/Cirq)}
+
+Cirq是由Google开发的开源量子计算编程框架，它专注于量子算法的开发和演示，并提供了一套灵活的工具和库，可以在量子计算机上进行量子计算的模拟和实验。Cirq的主要特点包括面向研究和教育、灵活的模拟、可扩展性以及强大的调试工具。它支持多种不同类型的量子计算架构，包括通用量子计算和量子模拟，这使得用户可以自由地在不同的硬件平台和算法中进行开发和测试。
+
+\textbf{2. Qiskit (https://www.ibm.com/quantum/qiskit)}
+
+Qiskit是一个由IBM开发的开源量子计算软件开发框架，旨在利用当今的量子处理器进行研究、教育和商业活动。它支持多种量子计算平台，包括量子模拟器和真实量子计算机。Qiskit的目标是使开发者能够利用量子计算的潜力，并为其提供必要的工具。
+Qiskit的主要组件包括：
+
+\begin{paralist}
+    \item Qiskit Terra：提供基本的构建块和API，允许用户构建量子电路。
+    \item Qiskit Aer：用于模拟量子电路和量子计算的工具。
+    \item Qiskit Ignis：用于量子误差校正和噪声研究的组件。
+    \item Qiskit Aqua：用于应用于量子算法的高层次接口。
+    \item Qiskit Nature：专注于化学和物理的量子应用。
+\end{paralist}
+
+
+\textbf{3. Q\# (https://learn.microsoft.com/zh-cn/azure/quantum/qsharp-overview)}
+
+Q\# 是由 Microsoft 开发的专门用于量子计算的高级开源编程语言，它包含在 Quantum 开发工具包（QDK）中。Q\# 旨在帮助开发人员利用量子计算的潜力来解决复杂问题。它提供声明式编程方法，集成开发环境，丰富的库和工具，可扩展性和互操作性，量子模拟器和开源支持。Q\# 支持硬件不可知的量子算法开发，使得编写的量子程序可以在不同的量子计算机和模拟器上运行。
+
+\textbf{4. QPanda (https://qcloud.originqc.com.cn/zh/programming/QPanda)}
+
+QPanda是由本源量子开发的开源量子计算框架，它可以用于构建、运行和优化量子算法。QPanda 作为本源量子计算系列软件的基础库，为OriginIR、Qurator、量子计算服务提供核心部件。QPanda是一种功能齐全、运行高效的量子软件开发工具包，它是一款开源的量子计算框架，可以用于构建、运行和优化量子算法。QPanda提供了丰富的量子计算编程基础组件，包括量子比特和量子门操作，开发者可以使用这些组件来构建复杂的量子算法，从简单的量子门序列到更复杂的量子电路。这些基础组件为开发者提供了构建量子计算任务所需的核心工具。此外，QPanda还提供了高性能量子虚拟机，允许开发者在经典计算机上进行高效的量子模拟，使开发者能够在不依赖实际量子硬件的情况下测试和优化他们的算法。
+
+\subsection{量子云平台}
+\textbf{1. IBM Quantum  (https://www.ibm.com/quantum)}
+
+IBM Quantum 允许用户在 IBM 的真实量子计算机上运行量子算法。它提供了一个用户友好的界面，以及一套量子编程工具，如 Qiskit，来设计和测试量子电路。IBM Quantum旨在促进量子计算的研究和教育，使量子计算对更广泛的用户群体开放。
+
+\textbf{2. Amazon Braket (https://aws.amazon.com/braket/)}
+
+Amazon Braket 是一项完全托管的量子计算服务，旨在帮助加快量子计算的科学研究和软件开发。它允许用户轻松处理不同类型的量子计算机和电路模拟器，使用一组一致的开发工具。Braket 提供了对超导、俘获离子和中性原子设备的支持，以及量子硬件研究的界限突破。此外，它还提供了软件开发工具包（SDK）、简单的定价和工作流管理，以及开源软件的开发支持。
+
+\textbf{3. Azure Quantum (https://azure.microsoft.com/zh-cn/products/quantum/)}
+
+Azure Quantum 是微软提供的量子云计算服务，构建在可信赖、可扩展且高度安全的 Azure 平台上。它包括来自微软和合作伙伴的多样化量子硬件和软件解决方案，提供了一个开放、灵活的环境，适应用户需求，加速进展并确保技术的未来发展。Azure Quantum 支持 Cirq、Qiskit 和 Q\# 等编程语言，允许用户在多个平台上创建和运行算法，同时保留针对特定系统进行调整的能力。
+
+\textbf{4. 本源量子云 (https://qcloud.originqc.com.cn/zh/home)}
+
+本源量子云提供真实量子计算、量子计算模拟器和超-量混合计算后端接入，为开发者提供基础软件与开发工具，为生物化学、金融科技、大数据、机器学习等先进企业提供行业应用服务

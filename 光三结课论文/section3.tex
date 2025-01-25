@@ -1,0 +1,19 @@
+\section{量子算法及编码实现}
+
+对量子算法的编码实现步骤可概括为图\ref{fig_al}：
+\begin{figure}[htb]
+    \centering
+    \caption{量子算法编码实现步骤}
+    \includegraphics[width=0.9\textwidth]{figures/export.png}
+    \label{fig_al}
+\end{figure}
+
+首先，需要选择一种量子编程语言，如Qiskit、Cirq、Q\#等。这些语言提供了构建量子电路、实现量子算法所需的工具和库。
+之后，使用所选的量子编程语言，构建量子电路。量子电路由量子门组成，这些门定义了量子比特（qubits）之间的操作和相互作用。例如，在Qiskit中，可以使用Hadamard门和CNOT门来创建纠缠态。
+构建量子电路后可以选择在真实的量子计算机上运行算法。如利用IBM Quantum、亚马逊Braket和微软Azure Quantum等平台，将构建的量子电路上传到云平台。这些平台提供量子模拟和量子硬件执行的能力，允许用户在真实的量子计算机上运行算法。
+或者选择在经典计算机上模拟量子电路的运行，以验证量子算法的正确性和效率，该方法适用于小规模的量子电路。当然，由于是经典计算机上的模拟，其解决问题的实际速度不具有量子优势。
+执行结束后分析算法的性能和结果。
+
+本文通过Qiskit在计算机上模拟实现算法。
+\input{Deutsch-Jozsa算法.tex}
+\input{Grover搜索算法.tex}

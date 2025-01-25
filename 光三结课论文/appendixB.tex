@@ -1,0 +1,172 @@
+\section{Qiskit的安装及基本使用方法}
+\label{附录A}
+\subsection{Qiskit的安装}
+\textbf{Qiskit的安装要求：}
+
+Python版本：建议使用Python 3.6及以上版本。这是Qiskit运行的基础环境，确保Python版本符合要求可以避免安装过程中出现兼容性问题。
+
+操作系统：Qiskit支持64位操作系统，如Ubuntu 16.04、macOS 10.12.6、Windows 7及以上版本。
+
+基础函数库：Qiskit安装过程中可能需要一些基础函数库，如Numpy等。
+
+\subsubsection{下载并安装Anaconda}
+\begin{paralist}
+    \item 下载Anaconda：进入官网下载（https://www.anaconda.com/download）
+
+    \item 安装conda 
+\end{paralist}
+\subsubsection{创建虚拟环境并安装Qiskit}
+\begin{paralist}
+    \item 虚拟环境的创建：打开Anaconda Prompt输入并运行\textsf{conda create -n py python=3.8}
+    \item 激活虚拟环境：输入并运行\textsf{conda activate py}
+    \item 安装Qiskit：在虚拟环境下输入并运行\textsf{pip install qiskit[visualization]}(遇到网络问题可以配置使用镜像源)
+\end{paralist}
+\subsubsection{Jupyter Notebook使用}
+在创建好的虚拟环境中输入：
+\begin{paralist}
+    \item \textsf{conda install ipykernel}
+    \item \textsf{ipython kernel install --user --name=pykernel}
+\end{paralist}
+
+在Anaconda安装目录下打开Jupyter Notebook,点击New且选择pykernel创建ipynb文件，即可开始编写、运行程序。
+\figu{0.4}{figures/ju.png}
+\subsection{Qiskit的基本使用方法}
+Qiskit能实现多个功能。下面主要介绍如何创建量子线路并绘制、如何模拟器运行量子线路。
+
+\bold{1.创建、绘制量子线路}
+
+Qiskit 创建与绘制量子线路的主要步骤如下：
+
+\begin{py}
+\begin{lstlisting}
+#1.导入库
+from qiskit import(QuantumCircuit,transpile)
+from qiskit_aer import Aer
+from qiskit.visualization import plot_histogram
+#2.创建量子线路
+circuit = QuantumCircuit(2,2)#创建两个经典位与量子位
+circuit.h(0)#在第0个量子位上添加H门
+circuit.cx(0,1)#添加受控非门，控制位为0，目标位为1
+circuit.measure([0,1],[0,1])
+#(qubit, cbit)将qubit测量结果存储到cbit中
+#3.绘制量子线路
+circuit.draw(output='mpl',filename='qc.png')#获得png图片
+\end{lstlisting}
+\end{py}
+\fig{输出的量子线路图}{0.6}{code/qc.png}
+
+\bold{2.模拟器运行}
+
+QasmSimulator和StatevectorSimulator为Qiskit中两类常用的模拟器，它们的特点如下：
+\begin{paralist}
+    \item QasmSimulator:模拟量子线路的多次运行并返回测量结果的概率分布。
+    \item StatevectorSimulator：返回量子线路的最终状态向量。主要用于分析量子线路的量子态，不涉及测量操作。
+\end{paralist}
+
+QasmSimulator使用示例：
+\begin{py}
+\begin{lstlisting}
+#QasmSimulator使用示例
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import Aer
+from qiskit.visualization import plot_histogram
+
+# 创建量子线路
+qc = QuantumCircuit(2, 2)
+qc.h(0)
+qc.cx(0, 1)
+qc.measure([0, 1], [0, 1])
+
+# 选择QasmSimulator
+simulator = = Aer.get_backend('qasm_simulator')
+
+# 编译电路
+transpiled_circuit = transpile(qc, simulator)
+
+# 运行电路并获取结果
+job = simulator.run(transpiled_circuit, shots=1024)
+result = job.result()
+
+# 获取测量结果
+counts = result.get_counts(qc)
+print("实验结果:", counts)
+
+# 可视化
+out = plot_histogram(counts)
+out.savefig('out.png')
+\end{lstlisting}
+\end{py}
+
+\fig{QasmSimulator使用示例输出结果}{0.6}{code/out.png}
+输出结果与\( |\Phi^{+}\rangle = \frac{1}{\sqrt{2}} (|00\rangle + |11\rangle) \),$|00\rangle$与$|11\rangle$出现概率为$50\%$对应。
+
+StatevectorSimulator使用示例：
+
+\begin{py}
+\begin{lstlisting}
+#StatevectorSimulator使用示例
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import Aer
+from qiskit.visualization import plot_state_city
+
+# 创建量子线路
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.cx(0, 1)
+
+# 选择StatevectorSimulator
+simulator = Aer.get_backend('statevector_simulator') 
+
+
+# 编译电路
+transpiled_circuit = transpile(qc, simulator)
+
+# 运行电路并获取结果
+job = simulator.run(transpiled_circuit)
+result = job.result()
+
+# 获取状态向量
+statevector = result.get_statevector(qc)
+
+#可视化
+out=plot_state_city(statevector)
+out.savefig('out1.png')
+\end{lstlisting}
+\end{py}
+\fig{StatevectorSimulator使用示例输出结果}{0.8}{code/out1.png}
+输出结果与 \( |\Phi^{+}\rangle = \frac{1}{\sqrt{2}} (|00\rangle + |11\rangle) \) 的密度矩阵一致，即
+
+\[
+\rho_{\Phi^{+}} = |\Phi^{+}\rangle \langle \Phi^{+}|
+= \begin{bmatrix} \frac{1}{\sqrt{2}} \\ 0 \\ 0 \\ \frac{1}{\sqrt{2}} \end{bmatrix} \begin{bmatrix} \frac{1}{\sqrt{2}} & 0 & 0 & \frac{1}{\sqrt{2}} \end{bmatrix}
+= \frac{1}{2} \begin{bmatrix} 1 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 1 & 0 & 0 & 1 \end{bmatrix}
+\]
+
+除以上两个模拟器外，Qiskit中还有模拟器Uintary Simulator。通过UnitarySimulator，可以方便地得到整个量子线路对应的单位矩阵，对于理论分析和验证量子线路的正确性非常有用。使用方法与上面类似。
+\begin{py}
+\begin{lstlisting}
+#UnitarySimulator使用示例
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import Aer
+
+# 创建量子线路
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.cx(0, 1)
+
+# 选择 unitary_simulator
+simulator = Aer.get_backend('unitary_simulator')
+
+# 编译电路
+transpiled_circuit = transpile(qc, simulator)
+
+# 运行电路并获取结果
+job = simulator.run(transpiled_circuit)
+result = job.result()
+
+# 获取单位矩阵
+unitary = result.get_unitary(qc)
+print("单位矩阵:\n", unitary)  
+\end{lstlisting}
+\end{py}
+\fig{UnitarySimulator使用示例输出结果}{0.8}{figures/uni.png}

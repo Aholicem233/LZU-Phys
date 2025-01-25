@@ -1,0 +1,154 @@
+\subsection{Grover搜索算法}
+Grover搜索算法是由Lov Grover在1996年提出的一种量子算法，它主要用于解决无序数据库搜索问题，即在一个无序的数据库中寻找特定的元素。Grover算法被认为是继Shor算法之后的第二大量子算法，也是第一个被完整实验实现的量子算法。求解无序数据库搜索问题（假设只有一个目标搜索数据），经典算法所需的时间复杂度为\(\mathcal{O}(N)\)，而Grover搜索算法所需的时间复杂度仅为\(\mathcal{O}(\sqrt{N})\)，相比经典算法具有平方加速，展示了量子计算的强大性能。
+\subsubsection{Grover搜索算法描述}
+Grover算法的基本原理是利用量子叠加和量子干涉来放大目标态的概率振幅，同时抑制非目标态的概率振幅，这个过程被称为振幅放大。通过这种方式，Grover算法能够在多项式时间内找到一个无序数据库中的所有匹配项。
+算法完成的任务: 一未知的黑盒$f :\{0,1\}^n\rightarrow\{0,1\}$, 找出使得$f(x) = 1$的$x$。
+
+Grover算法的量子线路如下：
+\begin{define}{Grover算法量子线路}
+    \begin{center}
+        \begin{quantikz}
+            \lstick{$\ket{0}^{\otimes n}$} & \gate{H^{\otimes n}} & \gate[wires=2]{\hat{G}} & \gate[wires=2]{\hat{G}} & \qw \cdots & \gate[wires=2]{\hat{G}} & \meter{} \\
+            \lstick{$\ket{1}$} & \gate{H} & \qw & \qw & \qw \cdots & \qw & \qw
+        \end{quantikz}
+    \end{center}
+
+\begin{center}
+    \begin{quantikz}
+        \qw  & \gate[2][1cm]{\hat{G}} & \qw \\
+        \qw & \qw & \qw
+    \end{quantikz}$\Rightarrow$
+    \begin{quantikz}
+        \lstick{\ket{\psi}} & \qwbundle[n=2]{n} & \gate[2][1.7cm]{U_f}\gateinput[1]{$x$}\gateoutput[1]{$x$}  & \gate{2\ket{\psi}\bra{\psi} - I} & \qw \\
+        \lstick{$\frac{\ket{0} - \ket{1}}{\sqrt{2}}$}& \qw & \gateinput{$y$}\gateoutput{$y\oplus f(x)$}  & \qw & \qw  \\
+    \end{quantikz}    
+\end{center}
+\end{define}
+
+Grover算法工作过程如下：
+
+首先对初态为 $|0\rangle^{\otimes n}$，用 Hadamard 变换 $H^{\otimes n}$ 得到等权叠加态 $|\psi\rangle$（包含所有搜索问题的解与非搜索问题的解），即
+\[
+|\psi\rangle = \frac{1}{\sqrt{N}} \sum_{x=0}^{N-1} |x\rangle
+\]
+
+其中，$N = 2^n$。
+
+此后，Grover算法连续多次执行G迭代操作。
+
+Grover 的一次迭代分为以下四步：
+\begin{enumerate}
+    \item 执行 Oracle 操作（$U_f$ 算符），将搜索问题的解对应的索引态增加相位因子 $-1$。
+    \item Hadamard 变换 $H^{\otimes n}$。
+    \item 相位变换：保持基态 $|0\rangle$ 的系数不变，其他基态的系数增加一个负号，对应的算符记为 $U_0 = 2|0\rangle\langle 0| - I$。
+    \item Hadamard 变换 $H^{\otimes n}$。
+\end{enumerate}
+
+将2、3、4结合后的效果为
+\[
+U_{\psi} = H^{\otimes n} U_0 H^{\otimes n} = H^{\otimes n} (2|0\rangle\langle 0| - I) H^{\otimes n}
+\]
+\[
+= 2H^{\otimes n} |0\rangle\langle 0| H^{\otimes n} - I = 2|\psi\rangle\langle\psi| - I
+\]
+
+于是，Grover 一次迭代的操作算符 $G$ 等价于
+\[
+G = U_{\psi} U_f = (2|\psi\rangle\langle\psi| - I) U_f
+\]
+
+通过上面的迭代,测量塌缩到索引的态的概率增大,多次迭代后完成搜索。
+\subsubsection{Grover算法Qiskit实现}
+通过Qiskit实现$\ket{000},\ket{001},\ket{100},\ket{010},\ket{011},\ket{110},\ket{101},\ket{111}$找$\ket{111}$的Grover算法。
+
+Qiskit实现:
+
+\bold{1.实现黑盒函数}
+
+\begin{py}
+\begin{lstlisting}
+# 初始化
+import numpy as np
+# 导入 Qiskit 库
+from qiskit import QuantumCircuit, transpile, quantum_info
+from qiskit_aer import QasmSimulator
+from qiskit import ClassicalRegister, QuantumRegister
+from qiskit.visualization import plot_histogram
+
+# 设置量子比特数量
+n = 3
+
+# 定义 Oracle 函数，用于标记特定的量子态 |111>
+def Oracle():  
+    oc = QuantumCircuit(n) 
+    # 使用H门和CCX门（受控非门）来实现 CZ 门的效果
+    oc.h(2)  # 对第2个量子比特应用Hadamard门
+    oc.ccx(0, 1, 2)  # 应用受控非门
+    oc.h(2)  # 再次对第2个量子比特应用Hadamard门
+    return oc
+
+\end{lstlisting}
+\end{py}
+
+\bold{2.实现振幅放大}
+
+\begin{py}
+\begin{lstlisting}
+# 定义扩散算子函数，用于实现幅度放大
+def A(nb): 
+    ac = QuantumCircuit(nb)
+    ac.h(range(nb))  # 对所有量子比特应用Hadamard门
+    ac.x(range(nb))  # 对所有量子比特应用X门（非门）
+    # 执行多控制Z门
+    ac.h(nb-1)  # 对最后一个量子比特应用Hadamard门
+    ac.mcx(list(range(nb-1)), nb-1)  # 多控制Z门
+    ac.h(nb-1)  # 再次对最后一个量子比特应用Hadamard门
+    ac.x(range(nb))  # 对所有量子比特应用X门
+    ac.h(range(nb))  # 对所有量子比特再次应用Hadamard门
+    return ac
+\end{lstlisting}
+\end{py}
+
+\bold{3.实现Grover算法}
+\begin{py}
+\begin{lstlisting}
+    # 创建量子电路
+    qc = QuantumCircuit(n)
+    qc.h(range(n))  # 对所有量子比特应用Hadamard门
+    
+    # 构建 Oracle 和幅度放大电路
+    OA = QuantumCircuit(n)
+    # 将Oracle函数内的内容组合到OA电路中
+    OA.compose(Oracle(), inplace=True)  
+    # 将扩散算子组合到OA电路中
+    OA.compose(A(n), inplace=True)  
+    # 将OA电路组合到qc电路中
+    qc.compose(OA, inplace=True)     
+    # 绘制电路图
+    qc.draw(output='mpl',filename='grover_circuit.png')
+\end{lstlisting}
+\end{py}
+\fig{Grover算法量子电路}{0.8}{code/grover_circuit.png}
+
+\bold{4.模拟运行}
+\begin{py}
+\begin{lstlisting}
+qc.save_statevector()  # 保存量子电路的状态向量
+
+
+simulator = QasmSimulator()
+compiled_circuit = transpile(qc, simulator)
+job = simulator.run(compiled_circuit, shots=1000)
+result = job.result()  # 获取运行结果
+out_state = result.get_statevector()  # 获取状态向量
+counts = result.get_counts()  # 获取测量结果的计数
+# 反转字典 counts 中的字符串并存储到新字典answer中
+answer = {}
+for str in counts:
+    answer[str[::-1]] = counts[str]  
+# 绘图
+plot_histogram(answer).savefig('groverout.png') 
+\end{lstlisting}
+\end{py}
+\fig{Grover算法输出结果}{0.5}{code/groverout.png}
+从输出结果不难看出，$\ket{111}$的振幅（出现的概率）被明显放大，代码实现了Grover算法的功能。
